@@ -1,70 +1,76 @@
 import { SearchBar } from './SearchBar/SearchBar';
 import { ImageGallery } from './ImageGallery/ImageGallery';
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import { fetchImagesApi } from 'services/imageApi';
 import { Loader } from './Loader/Loader';
 import { Button } from './Button/Button';
+import { ImageProvider } from './ImagesContext.js/ImagesContext';
 
-export class App extends Component {
-  state = {
-    images: [],
-    searchValue: '',
-    isLoading: false,
-    error: null,
-    page: 1,
-  };
+export const App = () => {
+  // state = {
+  //   images: [],
+  //   searchValue: '',
+  //   isLoading: false,
+  //   error: null,
+  //   page: 1,
+  // };
 
-  handleSubmit = async searchValue => {
-    this.setState({ searchValue: searchValue, page: 1 });
+  const [images, setImages] = useState([]);
+  const [searchValue, setSearchValue] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [page, setPage] = useState(1);
+
+  const handleSubmit = searchValue => {
+    setSearchValue(searchValue);
+    setPage(1);
     console.log(searchValue);
   };
 
-  async componentDidUpdate(prevProps, prevState) {
-    if (
-      prevState.searchValue !== this.state.searchValue ||
-      prevState.page !== this.state.page
-    ) {
-      this.showPhotos();
-    }
-  }
+  // async componentDidUpdate(prevProps, prevState) {
+  //   if (
+  //     prevState.searchValue !== this.state.searchValue ||
+  //     prevState.page !== this.state.page
+  //   ) {
+  //     this.showPhotos();
+  //   }
+  // }
 
-  async showPhotos() {
-    this.setState({ isLoading: true });
+  useEffect(() => {
+    if (searchValue !== searchValue || page !== page) {
+      showPhotos();
+    }
+  }, [images]);
+
+  const showPhotos = async () => {
+    setIsLoading(true);
     try {
-      const { searchValue, page } = this.state;
       const images = await fetchImagesApi(searchValue, page);
       console.log(images);
-      if (this.state.page === 1) {
-        this.setState({ images });
+      if (page === 1) {
+        setImages(images);
       } else {
-        this.setState({ images: this.state.images.concat(images) });
+        setImages(images.concat(images));
       }
     } catch (error) {
-      this.setState({ error });
+      setError(error);
     } finally {
-      this.setState({ isLoading: false });
+      setIsLoading(false);
     }
-  }
-
-  handleLoadMore = () => {
-    this.setState(prevState => {
-      return { page: prevState.page + 1 };
-    });
   };
 
-  scrollToBottom() {
-    this.el.scrollIntoView({ behavior: 'smooth' });
-  }
+  const handleLoadMore = () => {
+    setPage(page + 1);
+  };
 
-  render() {
-    const { images, isLoading } = this.state;
-    return (
-      <div>
-        <SearchBar onSubmit={this.handleSubmit}></SearchBar>
-        <ImageGallery images={images} />
-        {images.length >= 12 ? <Button onClick={this.handleLoadMore} /> : ''}
+  return (
+    <div>
+      <ImageProvider value={images}>
+        <SearchBar onSubmit={handleSubmit}></SearchBar>
+        <ImageGallery />
+        {images.length >= 12 ? <Button onClick={handleLoadMore} /> : ''}
         {isLoading && <Loader />}
-      </div>
-    );
-  }
-}
+      </ImageProvider>
+    </div>
+  );
+};

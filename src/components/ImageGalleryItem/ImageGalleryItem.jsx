@@ -1,39 +1,31 @@
 import css from './ImageGalleryItem.module.css';
-import { Component } from 'react';
+import { useState } from 'react';
 import { Modal } from 'components/Modal/Modal';
 import PropTypes from 'prop-types';
 
-export class ImageGalleryItem extends Component {
-  state = {
-    isShowModal: false,
+export const ImageGalleryItem = ({ src, alt, largeImage }) => {
+  const [isShowModal, setIsShowModal] = useState(false);
+
+  const showModal = () => {
+    setIsShowModal(true);
   };
 
-  showModal = () => {
-    this.setState({ isShowModal: true });
+  const hideModal = () => {
+    setIsShowModal(false);
   };
 
-  hideModal = () => {
-    this.setState({ isShowModal: false });
-  };
-
-  render() {
-    const { src, alt, largeImage } = this.props;
-    const { isShowModal } = this.state;
-    return (
-      <li className={css.imageGalleryItem}>
-        <img
-          className={css.imageGalleryItem_image}
-          src={src}
-          alt={alt}
-          onClick={this.showModal}
-        />
-        {isShowModal && (
-          <Modal largeImage={largeImage} onClick={this.hideModal} />
-        )}
-      </li>
-    );
-  }
-}
+  return (
+    <li className={css.imageGalleryItem}>
+      <img
+        className={css.imageGalleryItem_image}
+        src={src}
+        alt={alt}
+        onClick={showModal}
+      />
+      {isShowModal && <Modal largeImage={largeImage} onClick={hideModal} />}
+    </li>
+  );
+};
 
 ImageGalleryItem.propTypes = {
   images: PropTypes.array,
