@@ -1,11 +1,8 @@
 import css from './ImageGallery.module.css';
 import { ImageGalleryItem } from 'components/ImageGalleryItem/ImageGalleryItem';
 import PropTypes from 'prop-types';
-import { UseImageContext } from 'components/ImagesContext.js/ImagesContext';
 
-export const ImageGallery = () => {
-  const { images } = UseImageContext();
-
+export const ImageGallery = ({ images }) => {
   return (
     <ul className={css.imageGallery}>
       {images.map(({ id, webformatURL, largeImageURL, tags }) => (

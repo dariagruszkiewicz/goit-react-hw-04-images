@@ -2,26 +2,18 @@ import css from './Modal.module.css';
 import { useEffect } from 'react';
 
 export const Modal = ({ largeImage, alt, id, onClick }) => {
-  // componentDidMount() {
-  //   window.addEventListener('keydown', this.closeModal);
-  // }
+  const closeModal = e => {
+    if (e.code === 'Escape' || e.target === e.currentTarget) {
+      onClick();
+    }
+  };
 
   useEffect(() => {
     window.addEventListener('keydown', closeModal);
     return () => {
-      window.removeEventListener('keydown', this.closeModal);
+      window.removeEventListener('keydown', closeModal);
     };
   }, []);
-
-  // componentWillUnmount() {
-  //   window.removeEventListener('keydown', this.closeModal);
-  // }
-
-  const closeModal = ({ target, currentTarget, code }) => {
-    if (code === 'Escape' || target === currentTarget) {
-      onClick();
-    }
-  };
 
   return (
     <div className={css.overlay} onClick={closeModal}>

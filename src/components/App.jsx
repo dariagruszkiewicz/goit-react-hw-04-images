@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { fetchImagesApi } from 'services/imageApi';
 import { Loader } from './Loader/Loader';
 import { Button } from './Button/Button';
-import { ImageProvider } from './ImagesContext.js/ImagesContext';
 
 export const App = () => {
   // state = {
@@ -36,12 +35,6 @@ export const App = () => {
   //   }
   // }
 
-  useEffect(() => {
-    if (searchValue !== searchValue || page !== page) {
-      showPhotos();
-    }
-  }, [images]);
-
   const showPhotos = async () => {
     setIsLoading(true);
     try {
@@ -63,14 +56,23 @@ export const App = () => {
     setPage(page + 1);
   };
 
+  useEffect(() => {
+    if (!searchValue) return;
+    showPhotos(searchValue, page);
+  }, [searchValue, page]);
+
+  useEffect(() => {
+    if (error) {
+      alert(`Error!`);
+    }
+  }, [error]);
+
   return (
     <div>
-      <ImageProvider value={images}>
-        <SearchBar onSubmit={handleSubmit}></SearchBar>
-        <ImageGallery />
-        {images.length >= 12 ? <Button onClick={handleLoadMore} /> : ''}
-        {isLoading && <Loader />}
-      </ImageProvider>
+      <SearchBar onSubmit={handleSubmit}></SearchBar>
+      <ImageGallery images={images} />
+      {images.length >= 12 ? <Button onClick={handleLoadMore} /> : ''}
+      {isLoading && <Loader />}
     </div>
   );
 };
