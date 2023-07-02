@@ -59,6 +59,7 @@ export const App = () => {
   useEffect(() => {
     if (!searchValue) return;
     showPhotos(searchValue, page);
+    // eslint-disable-next-line
   }, [searchValue, page]);
 
   useEffect(() => {

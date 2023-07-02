@@ -13,6 +13,7 @@ export const Modal = ({ largeImage, alt, id, onClick }) => {
     return () => {
       window.removeEventListener('keydown', closeModal);
     };
+    // eslint-disable-next-line
   }, []);
 
   return (
